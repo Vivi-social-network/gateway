@@ -1,0 +1,16 @@
+env: dev
+
+servers:
+  http:
+    unescape_path: true
+    body_limit: 1.048576e+07
+    read_timeout: 15s
+    write_timeout: 15s
+    idle_timeout: 15s
+    app_name: gateway
+    enable_print_routes: true
+    addr: :8080
+    enable_pprof: true
+
+logger:
+  level: 0
