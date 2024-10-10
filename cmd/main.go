@@ -4,12 +4,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
+
+	"go.uber.org/zap"
 	"os"
 	"runtime"
 
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-
+	"github.com/Vivi-social-network/core/logger"
 	"github.com/Vivi-social-network/gateway/internal/config"
 	"github.com/Vivi-social-network/gateway/internal/server/http"
 )
@@ -39,54 +39,27 @@ func main() {
 		panic(fmt.Sprintf("cannot parse config: %v", err))
 	}
 
-	logger := createLogger(cfg.Logger.Level)
+	log := logger.New(cfg.Logger)
 
-	logger.Info("service starting", zap.String("env", cfg.Env), zap.Int("CPUs", runtime.NumCPU()))
+	log.Info("service starting", zap.String("env", cfg.Env), zap.Int("CPUs", runtime.NumCPU()))
 
-	logger.Info("configure server")
+	log.Info("configure server")
 	srv, err := http.New(
 		cfg.Servers.HTTP,
 		cfg.IsDev(),
-		logger,
+		log,
 	)
 	if err != nil {
-		logger.Fatal("cannot create server", zap.Error(err))
+		log.Fatal("cannot create server", zap.Error(err))
 	}
 
-	logger.Info("start http server")
+	log.Info("start http server")
 	go func() {
 		if err := srv.Listen(ctx); err != nil {
-			logger.Fatal("cannot run server", zap.Error(err))
+			log.Fatal("cannot run server", zap.Error(err))
 		}
 	}()
 
-	logger.Info("started")
+	log.Info("started")
 	<-ctx.Done()
-}
-
-func createLogger(logLevel int8) *zap.Logger {
-	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-
-	zapConfig := zap.Config{
-		Level:             zap.NewAtomicLevelAt(zapcore.Level(logLevel)),
-		Development:       false,
-		DisableCaller:     false,
-		DisableStacktrace: false,
-		Sampling:          nil,
-		Encoding:          "json",
-		EncoderConfig:     encoderCfg,
-		OutputPaths: []string{
-			"stderr",
-		},
-		ErrorOutputPaths: []string{
-			"stderr",
-		},
-		InitialFields: map[string]interface{}{
-			"pid": os.Getpid(),
-		},
-	}
-
-	return zap.Must(zapConfig.Build())
 }

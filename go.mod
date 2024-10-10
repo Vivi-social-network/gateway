@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/Vivi-social-network/core v0.0.0-20241010235319-baefef3120de // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/klauspost/compress v1.17.10 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"github.com/Vivi-social-network/core/logger"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -21,7 +22,7 @@ type Server struct {
 
 	srv *fiber.App
 
-	logger *zap.Logger
+	logger *logger.Logger
 }
 
 func (s *Server) Listen(ctx context.Context) error {
@@ -58,7 +59,7 @@ func (s *Server) initRoutes() {
 func New(
 	cfg config.HTTPServer,
 	isDev bool,
-	logger *zap.Logger,
+	logger *logger.Logger,
 ) (*Server, error) {
 	fiberSrv := fiber.New(fiber.Config{
 		UnescapePath:      cfg.UnescapePath,

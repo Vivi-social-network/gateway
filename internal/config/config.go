@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/Vivi-social-network/core/logger"
 )
 
 const (
@@ -12,9 +14,9 @@ const (
 )
 
 type Config struct {
-	Env     string  `yaml:"env"`
-	Servers Servers `yaml:"servers"`
-	Logger  Logger  `yaml:"logger"`
+	Env     string        `yaml:"env"`
+	Servers Servers       `yaml:"servers"`
+	Logger  logger.Config `yaml:"logger"`
 }
 
 func (c Config) IsDev() bool {
