@@ -4,10 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-
-	"go.uber.org/zap"
 	"os"
 	"runtime"
+
+	"go.uber.org/zap"
 
 	"github.com/Vivi-social-network/core/logger"
 	"github.com/Vivi-social-network/gateway/internal/config"
