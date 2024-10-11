@@ -9,7 +9,7 @@ servers:
     idle_timeout: 15s
     app_name: gateway
     enable_print_routes: true
-    addr: :8080
+    address: :8080
     enable_pprof: true
 
 logger:

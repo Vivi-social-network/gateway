@@ -13,6 +13,7 @@ import (
 
 	"github.com/Vivi-social-network/core/logger"
 	"github.com/Vivi-social-network/gateway/internal/config"
+	"github.com/Vivi-social-network/gateway/internal/server/http/handlers"
 )
 
 type Server struct {
@@ -23,6 +24,39 @@ type Server struct {
 	srv *fiber.App
 
 	logger *logger.Logger
+
+	healthCheck *handlers.HealthCheck
+}
+
+func New(
+	cfg config.HTTPServer,
+	isDev bool,
+	logger *logger.Logger,
+	healthCheck *handlers.HealthCheck,
+) (*Server, error) {
+	fiberSrv := fiber.New(fiber.Config{
+		UnescapePath:      cfg.UnescapePath,
+		BodyLimit:         cfg.BodyLimit,
+		ReadTimeout:       cfg.ReadTimeout,
+		WriteTimeout:      cfg.WriteTimeout,
+		IdleTimeout:       cfg.IdleTimeout,
+		AppName:           cfg.AppName,
+		EnablePrintRoutes: cfg.EnablePrintRoutes,
+	})
+
+	srv := &Server{
+		addr:        cfg.Address,
+		isDev:       isDev,
+		enablePprof: cfg.EnablePprof,
+
+		srv:    fiberSrv,
+		logger: logger,
+
+		healthCheck: healthCheck,
+	}
+	srv.initRoutes()
+
+	return srv, nil
 }
 
 func (s *Server) Listen(ctx context.Context) error {
@@ -54,32 +88,7 @@ func (s *Server) initRoutes() {
 		s.srv.Use(pprof.New(pprof.Config{}))
 	}
 
-}
+	api := s.srv.Group("/api")
 
-func New(
-	cfg config.HTTPServer,
-	isDev bool,
-	logger *logger.Logger,
-) (*Server, error) {
-	fiberSrv := fiber.New(fiber.Config{
-		UnescapePath:      cfg.UnescapePath,
-		BodyLimit:         cfg.BodyLimit,
-		ReadTimeout:       cfg.ReadTimeout,
-		WriteTimeout:      cfg.WriteTimeout,
-		IdleTimeout:       cfg.IdleTimeout,
-		AppName:           cfg.AppName,
-		EnablePrintRoutes: cfg.EnablePrintRoutes,
-	})
-
-	srv := &Server{
-		addr:        cfg.Address,
-		isDev:       isDev,
-		enablePprof: cfg.EnablePprof,
-
-		srv:    fiberSrv,
-		logger: logger,
-	}
-	srv.initRoutes()
-
-	return srv, nil
+	s.initV1Routes(api)
 }

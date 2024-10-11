@@ -12,6 +12,7 @@ import (
 	"github.com/Vivi-social-network/core/logger"
 	"github.com/Vivi-social-network/gateway/internal/config"
 	"github.com/Vivi-social-network/gateway/internal/server/http"
+	"github.com/Vivi-social-network/gateway/internal/server/http/handlers"
 )
 
 var (
@@ -43,11 +44,15 @@ func main() {
 
 	log.Info("service starting", zap.String("env", cfg.Env), zap.Int("CPUs", runtime.NumCPU()))
 
+	log.Info("configure handlers")
+	healthCheck := handlers.NewHealthCheck()
+
 	log.Info("configure server")
 	srv, err := http.New(
 		cfg.Servers.HTTP,
 		cfg.IsDev(),
 		log,
+		healthCheck,
 	)
 	if err != nil {
 		log.Fatal("cannot create server", zap.Error(err))
