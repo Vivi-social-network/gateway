@@ -8,13 +8,15 @@ import (
 	"github.com/Vivi-social-network/core/logger"
 )
 
+type Env string
+
 const (
-	envDev  = "develop"
-	envProd = "prod"
+	envDev  Env = "develop"
+	envProd Env = "prod"
 )
 
 type Config struct {
-	Env     string        `yaml:"env"`
+	Env     Env           `yaml:"env"`
 	Servers Servers       `yaml:"servers"`
 	Logger  logger.Config `yaml:"logger"`
 }
