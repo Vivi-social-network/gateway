@@ -19,7 +19,7 @@ import (
 type Server struct {
 	addr        string
 	enablePprof bool
-	isDev       bool
+	env         config.Env
 
 	srv *fiber.App
 
@@ -30,7 +30,7 @@ type Server struct {
 
 func New(
 	cfg config.HTTPServer,
-	isDev bool,
+	env config.Env,
 	logger *logger.Logger,
 	healthCheck *handlers.HealthCheck,
 ) (*Server, error) {
@@ -46,7 +46,7 @@ func New(
 
 	srv := &Server{
 		addr:        cfg.Address,
-		isDev:       isDev,
+		env:         env,
 		enablePprof: cfg.EnablePprof,
 
 		srv:    fiberSrv,

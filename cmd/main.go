@@ -7,8 +7,6 @@ import (
 	"os"
 	"runtime"
 
-	"go.uber.org/zap"
-
 	"github.com/Vivi-social-network/core/logger"
 	"github.com/Vivi-social-network/gateway/internal/config"
 	"github.com/Vivi-social-network/gateway/internal/server/http"
@@ -42,7 +40,7 @@ func main() {
 
 	log := logger.New(cfg.Logger)
 
-	log.Info("service starting", zap.String("env", cfg.Env), zap.Int("CPUs", runtime.NumCPU()))
+	log.Info("service starting", "env", cfg.Env, "CPUs", runtime.NumCPU())
 
 	log.Info("configure handlers")
 	healthCheck := handlers.NewHealthCheck()
@@ -50,21 +48,32 @@ func main() {
 	log.Info("configure server")
 	srv, err := http.New(
 		cfg.Servers.HTTP,
-		cfg.IsDev(),
+		cfg.Env,
 		log,
 		healthCheck,
 	)
 	if err != nil {
-		log.Fatal("cannot create server", zap.Error(err))
+		log.Error("cannot create server", err)
+		return
 	}
 
 	log.Info("start http server")
-	go func() {
+	errChan := make(chan error, 1)
+	go func(errChan chan error) {
 		if err := srv.Listen(ctx); err != nil {
-			log.Fatal("cannot run server", zap.Error(err))
+			errChan <- fmt.Errorf("cannot run server: %w", err)
 		}
-	}()
+	}(errChan)
 
 	log.Info("started")
-	<-ctx.Done()
+	for {
+		select {
+		case <-ctx.Done():
+			log.Info("shutting down")
+			return
+		case err := <-errChan:
+			log.Error("error", err)
+			return
+		}
+	}
 }
