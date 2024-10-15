@@ -28,13 +28,13 @@ jobs:
         run: npm i -g @railway/cli
 
       - name: Deploy to Dev
-        if: ${{ stage == 'dev' }}
-        run: railway up -s ${{ github.event.repository.name }}-$stage -e dev
+        if: ${{ env.stage == 'dev' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ env.stage }} -e dev
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}
 
       - name: Deploy to Production
-        if: ${{ stage == 'production' }}
-        run: railway up -s ${{ github.event.repository.name }}-$stage -e production
+        if: ${{ env.stage == 'production' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ env.stage }} -e production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
