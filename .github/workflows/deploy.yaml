@@ -1,5 +1,9 @@
 name: Deploy
 
+env:
+  production: production
+  dev: develop
+
 on:
   workflow_dispatch:
     inputs:
