@@ -17,11 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Use Node 12
+      - name: deploy
         uses: bervProject/railway-deploy@main
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: "my-service"
+          service: "gateway"
