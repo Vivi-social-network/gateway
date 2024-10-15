@@ -13,8 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: deploy
-        uses: bervProject/railway-deploy@main
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node 12
+        uses: actions/setup-node@v1
         with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: "gateway"
+          node-version: 12.x
+
+      - name: Install Railway
+        run: npm i -g @railway/cli
+
+      - name: Deploy
+        run: railway up -p vivi-social-network -s ${{ github.event.repository.name }} -e ${{ github.event.inputs.environment }}
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
