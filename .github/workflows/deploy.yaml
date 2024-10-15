@@ -10,6 +10,9 @@ on:
 
 jobs:
   deploy:
+    env:
+      stage: ${{ github.event.inputs.environment }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -25,13 +28,13 @@ jobs:
         run: npm i -g @railway/cli
 
       - name: Deploy to Dev
-        if: ${{ github.event.inputs.environment == 'dev' }}
-        run: railway up -s ${{ github.event.repository.name }} -e dev
+        if: ${{ stage == 'dev' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ stage }} -e dev
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}
 
       - name: Deploy to Production
-        if: ${{ github.event.inputs.environment == 'production' }}
-        run: railway up -s ${{ github.event.repository.name }} -e production
+        if: ${{ stage == 'production' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ stage }} -e production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
