@@ -3,7 +3,7 @@ module github.com/Vivi-social-network/gateway
 go 1.23.0
 
 require (
-	github.com/Vivi-social-network/core v0.0.0-20241013131327-ef6d9ccd93b9
+	github.com/Vivi-social-network/core v0.0.0-20241015190004-5b554ba17f5a
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/google/uuid v1.6.0
 	go.uber.org/zap v1.27.0
