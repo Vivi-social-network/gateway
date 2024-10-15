@@ -10,21 +10,31 @@ on:
 
 jobs:
   deploy:
+    env:
+      stage: ${{ github.event.inputs.environment }}
+
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Use Node 12
+      - name: Use Node 16
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 16.x
 
       - name: Install Railway
         run: npm i -g @railway/cli
 
-      - name: Deploy
-        run: railway up
+      - name: Deploy to Dev
+        if: ${{ env.stage == 'dev' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ env.stage }} -e dev
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}
+
+      - name: Deploy to Production
+        if: ${{ env.stage == 'production' }}
+        run: railway up -s ${{ github.event.repository.name }}-${{ env.stage }} -e production
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
