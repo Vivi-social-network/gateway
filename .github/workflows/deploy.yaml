@@ -29,6 +29,6 @@ jobs:
         if: ${{ github.event.inputs.environment }} == 'dev'
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}
-        if: ${{ github.event.inputs.environment }} == 'production'
+        elif: ${{ github.event.inputs.environment }} == 'production'
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
