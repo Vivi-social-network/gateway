@@ -29,12 +29,12 @@ jobs:
 
       - name: Deploy to Dev
         if: ${{ stage == 'dev' }}
-        run: railway up -s ${{ github.event.repository.name }}-${{ stage }} -e dev
+        run: railway up -s ${{ github.event.repository.name }}-$stage -e dev
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_DEV }}
 
       - name: Deploy to Production
         if: ${{ stage == 'production' }}
-        run: railway up -s ${{ github.event.repository.name }}-${{ stage }} -e production
+        run: railway up -s ${{ github.event.repository.name }}-$stage -e production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN_PRODUCTION }}
