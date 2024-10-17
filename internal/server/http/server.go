@@ -42,6 +42,7 @@ func New(
 		IdleTimeout:       cfg.IdleTimeout,
 		AppName:           cfg.AppName,
 		EnablePrintRoutes: cfg.EnablePrintRoutes,
+		Network:           fiber.NetworkTCP,
 	})
 
 	srv := &Server{
